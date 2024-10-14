@@ -44,7 +44,6 @@ public class EasyBeam {
                 return
             }
 
-            // Create a copy of the request to use within the Task
             let taskRequest = request
 
             Task {
