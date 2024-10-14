@@ -1,5 +1,6 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 public class EasyBeam {
     
     public enum EasyBeamError: Error {
@@ -44,7 +45,6 @@ public class EasyBeam {
                 return
             }
 
-            // Create a copy of the request to use within the Task
             let taskRequest = request
 
             Task {
