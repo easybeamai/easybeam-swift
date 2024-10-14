@@ -1,5 +1,6 @@
 import Foundation
 
+@available(iOS 15.0, macOS 12.0, *)
 public class EasyBeam {
     
     public enum EasyBeamError: Error {
