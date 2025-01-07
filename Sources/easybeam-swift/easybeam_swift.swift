@@ -22,7 +22,7 @@ public class EasyBeam {
         self.session = session
     }
     
-    public func streamEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<ChatResponse, Error> {
+    public func streamEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage], userSecrets: [String: String]? = nil) -> AsyncThrowingStream<ChatResponse, Error> {
         AsyncThrowingStream { continuation in
             let url = URL(string: "\(baseUrl)/\(endpoint)/\(id)")!
             var request = URLRequest(url: url)
@@ -31,12 +31,16 @@ public class EasyBeam {
             request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
             request.setValue("Bearer \(config.token)", forHTTPHeaderField: "Authorization")
 
-            let body: [String: Any] = [
+            var body: [String: Any] = [
                 "variables": filledVariables,
                 "messages": messages.map { $0.asDictionary() },
                 "stream": true,
                 "userId": userId ?? NSNull()
             ]
+            
+            if let userSecrets = userSecrets {
+                body["userSecrets"] = userSecrets
+            }
 
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -79,19 +83,23 @@ public class EasyBeam {
         }
     }
     
-    public func getEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> ChatResponse {
+    public func getEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage], userSecrets: [String: String]? = nil) async throws -> ChatResponse {
         let url = URL(string: "\(baseUrl)/\(endpoint)/\(id)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(config.token)", forHTTPHeaderField: "Authorization")
         
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "variables": filledVariables,
             "messages": messages.map { $0.asDictionary() },
             "stream": false,
             "userId": userId ?? NSNull()
         ]
+        
+        if let userSecrets = userSecrets {
+            body["userSecrets"] = userSecrets
+        }
         
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         
@@ -112,12 +120,12 @@ public class EasyBeam {
         try await getEndpoint(endpoint: "prompt", id: promptId, userId: userId, filledVariables: filledVariables, messages: messages)
     }
     
-    public func streamAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<ChatResponse, Error> {
-        streamEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func streamAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage], userSecrets: [String: String]? = nil) -> AsyncThrowingStream<ChatResponse, Error> {
+        streamEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages, userSecrets: userSecrets)
     }
     
-    public func getAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> ChatResponse {
-        try await getEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func getAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage], userSecrets: [String: String]? = nil) async throws -> ChatResponse {
+        try await getEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages, userSecrets: userSecrets)
     }
     
     public func review(chatId: String, userId: String? = nil, reviewScore: Int? = nil, reviewText: String? = nil) async throws {
