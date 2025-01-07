@@ -22,7 +22,7 @@ public class EasyBeam {
         self.session = session
     }
     
-    public func streamEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<PortalResponse, Error> {
+    public func streamEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<ChatResponse, Error> {
         AsyncThrowingStream { continuation in
             let url = URL(string: "\(baseUrl)/\(endpoint)/\(id)")!
             var request = URLRequest(url: url)
@@ -65,8 +65,8 @@ public class EasyBeam {
                         }
 
                         do {
-                            let portalResponse = try JSONDecoder().decode(PortalResponse.self, from: data)
-                            continuation.yield(portalResponse)
+                            let chatResponse = try JSONDecoder().decode(ChatResponse.self, from: data)
+                            continuation.yield(chatResponse)
                         } catch {
                             throw EasyBeamError.decodingError
                         }
@@ -78,7 +78,8 @@ public class EasyBeam {
             }
         }
     }
-    public func getEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> PortalResponse {
+    
+    public func getEndpoint(endpoint: String, id: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> ChatResponse {
         let url = URL(string: "\(baseUrl)/\(endpoint)/\(id)")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -100,23 +101,23 @@ public class EasyBeam {
             throw EasyBeamError.invalidResponse
         }
         
-        return try JSONDecoder().decode(PortalResponse.self, from: data)
+        return try JSONDecoder().decode(ChatResponse.self, from: data)
     }
     
-    public func streamPortal(portalId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<PortalResponse, Error> {
-        streamEndpoint(endpoint: "portal", id: portalId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func streamPrompt(promptId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<ChatResponse, Error> {
+        streamEndpoint(endpoint: "prompt", id: promptId, userId: userId, filledVariables: filledVariables, messages: messages)
     }
     
-    public func getPortal(portalId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> PortalResponse {
-        try await getEndpoint(endpoint: "portal", id: portalId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func getPrompt(promptId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> ChatResponse {
+        try await getEndpoint(endpoint: "prompt", id: promptId, userId: userId, filledVariables: filledVariables, messages: messages)
     }
     
-    public func streamWorkflow(workflowId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<PortalResponse, Error> {
-        streamEndpoint(endpoint: "workflow", id: workflowId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func streamAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) -> AsyncThrowingStream<ChatResponse, Error> {
+        streamEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages)
     }
     
-    public func getWorkflow(workflowId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> PortalResponse {
-        try await getEndpoint(endpoint: "workflow", id: workflowId, userId: userId, filledVariables: filledVariables, messages: messages)
+    public func getAgent(agentId: String, userId: String? = nil, filledVariables: [String: String], messages: [ChatMessage]) async throws -> ChatResponse {
+        try await getEndpoint(endpoint: "agent", id: agentId, userId: userId, filledVariables: filledVariables, messages: messages)
     }
     
     public func review(chatId: String, userId: String? = nil, reviewScore: Int? = nil, reviewText: String? = nil) async throws {

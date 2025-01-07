@@ -2,11 +2,11 @@
 
 [![Build and Test](https://github.com/easybeamai/easybeam-swift/actions/workflows/ci.yml/badge.svg)](https://github.com/easybeamai/easybeam-swift/actions)
 
-Easybeam Swift SDK is a powerful and flexible library for integrating Easybeam AI functionality into your iOS applications. This SDK provides seamless access to Easybeam's AI-powered chat and workflow capabilities, supporting both streaming and non-streaming interactions.
+Easybeam Swift SDK is a powerful and flexible library for integrating Easybeam AI functionality into your iOS applications. This SDK provides seamless access to Easybeam's AI-powered chat capabilities, supporting both streaming and non-streaming interactions with prompts and agents.
 
 ## Features
 
-- **Portal and Workflow Integration**: Easily interact with Easybeam portals and workflows.
+- **Prompt and Agent Integration**: Easily interact with Easybeam prompts and agents.
 - **Streaming Support**: Real-time streaming of AI responses for interactive experiences.
 - **Non-Streaming Requests**: Traditional request-response pattern for simpler interactions.
 - **Flexible Configuration**: Customize the SDK behavior to fit your application needs.
@@ -38,11 +38,11 @@ let easybeam = EasyBeam(config: config)
 
 ### Streaming Interaction
 
-To start a streaming interaction with a portal:
+To start a streaming interaction with a prompt:
 
 ```swift
-let stream = easybeam.streamPortal(
-    portalId: "your_portal_id",
+let stream = easybeam.streamPrompt(
+    promptId: "your_prompt_id",
     filledVariables: ["key": "value"],
     messages: [
         ChatMessage(
@@ -65,8 +65,8 @@ For a simple request-response interaction:
 
 ```swift
 do {
-    let response = try await easybeam.getPortal(
-        portalId: "your_portal_id",
+    let response = try await easybeam.getPrompt(
+        promptId: "your_prompt_id",
         filledVariables: ["key": "value"],
         messages: [
             ChatMessage(

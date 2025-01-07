@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "easybeam-swift",
     platforms: [
-        .iOS(.v15) // Specify the minimum iOS version you want to support
+        .iOS(.v15)
     ],
     products: [
         .library(
