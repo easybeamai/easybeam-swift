@@ -26,7 +26,7 @@ class EasyBeamTests: XCTestCase {
         super.tearDown()
     }
     
-    func testStreamPortal() async throws {
+    func testStreamPrompt() async throws {
         let expectedMessage1 = ChatMessage(
             content: "Test content 1",
             role: .ai,
@@ -37,7 +37,7 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 20,
             cost: 0.001
         )
-        let expectedResponse1 = PortalResponse(
+        let expectedResponse1 = ChatResponse(
             newMessage: expectedMessage1,
             chatId: "test_chat_id",
             streamFinished: false
@@ -53,7 +53,7 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 25,
             cost: 0.002
         )
-        let expectedResponse2 = PortalResponse(
+        let expectedResponse2 = ChatResponse(
             newMessage: expectedMessage2,
             chatId: "test_chat_id",
             streamFinished: true
@@ -64,9 +64,9 @@ class EasyBeamTests: XCTestCase {
             (try JSONEncoder().encode(expectedResponse2), true)
         ]
         
-        let stream = easyBeam.streamPortal(portalId: "test_portal", filledVariables: [:], messages: [])
+        let stream = easyBeam.streamPrompt(promptId: "test_prompt", filledVariables: [:], messages: [])
         
-        var receivedResponses: [PortalResponse] = []
+        var receivedResponses: [ChatResponse] = []
         for try await response in stream {
             receivedResponses.append(response)
         }
@@ -83,7 +83,7 @@ class EasyBeamTests: XCTestCase {
         XCTAssertEqual(receivedResponses[1].streamFinished, expectedResponse2.streamFinished)
     }
     
-    func testGetPortal() async throws {
+    func testGetPrompt() async throws {
         let expectedMessage = ChatMessage(
             content: "Test content",
             role: .ai,
@@ -94,14 +94,14 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 20,
             cost: 0.001
         )
-        let expectedResponse = PortalResponse(
+        let expectedResponse = ChatResponse(
             newMessage: expectedMessage,
             chatId: "test_chat_id",
             streamFinished: true
         )
         MockURLProtocol.mockResponses = [(try JSONEncoder().encode(expectedResponse), false)]
         
-        let response = try await easyBeam.getPortal(portalId: "test_portal", filledVariables: [:], messages: [])
+        let response = try await easyBeam.getPrompt(promptId: "test_prompt", filledVariables: [:], messages: [])
         
         XCTAssertEqual(response.newMessage.content, expectedMessage.content)
         XCTAssertEqual(response.newMessage.role, expectedMessage.role)
@@ -109,7 +109,7 @@ class EasyBeamTests: XCTestCase {
         XCTAssertEqual(response.streamFinished, expectedResponse.streamFinished)
     }
     
-    func testStreamWorkflow() async throws {
+    func testStreamAgent() async throws {
         let expectedMessage1 = ChatMessage(
             content: "Test content 1",
             role: .ai,
@@ -120,7 +120,7 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 20,
             cost: 0.001
         )
-        let expectedResponse1 = PortalResponse(
+        let expectedResponse1 = ChatResponse(
             newMessage: expectedMessage1,
             chatId: "test_chat_id",
             streamFinished: false
@@ -136,7 +136,7 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 25,
             cost: 0.002
         )
-        let expectedResponse2 = PortalResponse(
+        let expectedResponse2 = ChatResponse(
             newMessage: expectedMessage2,
             chatId: "test_chat_id",
             streamFinished: true
@@ -147,9 +147,9 @@ class EasyBeamTests: XCTestCase {
             (try JSONEncoder().encode(expectedResponse2), true)
         ]
         
-        let stream = easyBeam.streamWorkflow(workflowId: "test_workflow", filledVariables: [:], messages: [])
+        let stream = easyBeam.streamAgent(agentId: "test_agent", filledVariables: [:], messages: [])
         
-        var receivedResponses: [PortalResponse] = []
+        var receivedResponses: [ChatResponse] = []
         for try await response in stream {
             receivedResponses.append(response)
         }
@@ -166,7 +166,7 @@ class EasyBeamTests: XCTestCase {
         XCTAssertEqual(receivedResponses[1].streamFinished, expectedResponse2.streamFinished)
     }
     
-    func testGetWorkflow() async throws {
+    func testGetAgent() async throws {
         let expectedMessage = ChatMessage(
             content: "Test content",
             role: .ai,
@@ -177,14 +177,14 @@ class EasyBeamTests: XCTestCase {
             outputTokens: 20,
             cost: 0.001
         )
-        let expectedResponse = PortalResponse(
+        let expectedResponse = ChatResponse(
             newMessage: expectedMessage,
             chatId: "test_chat_id",
             streamFinished: true
         )
         MockURLProtocol.mockResponses = [(try JSONEncoder().encode(expectedResponse), false)]
         
-        let response = try await easyBeam.getWorkflow(workflowId: "test_workflow", filledVariables: [:], messages: [])
+        let response = try await easyBeam.getAgent(agentId: "test_agent", filledVariables: [:], messages: [])
         
         XCTAssertEqual(response.newMessage.content, expectedMessage.content)
         XCTAssertEqual(response.newMessage.role, expectedMessage.role)

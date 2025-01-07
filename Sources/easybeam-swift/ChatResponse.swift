@@ -1,6 +1,6 @@
 import Foundation
 
-public struct PortalResponse: Codable {
+public struct ChatResponse: Codable {
     public let newMessage: ChatMessage
     public let chatId: String
     public let streamFinished: Bool?
